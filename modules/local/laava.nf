@@ -8,7 +8,7 @@ process match_metadata_to_files {
 
     script:
     """
-    match_metadata_to_files.py ${sample_in_metadata} ${sample_folder} \\
+    match_metadata_to_files.py ${params.bucket_path}/${sample_in_metadata} ${params.bucket_path}/${sample_folder} \\
         > metadata_with_paths.tsv
     """
 }
@@ -40,19 +40,20 @@ process map_reads() {
 
     script:
     // Hack for optional inputs
-    def packaging_fa_opt = packaging_fa.name != "NO_FILE" ? "--packaging \"$packaging_fa\"" : ""
-    def host_fa_opt = host_fa.name != "NO_FILE2" ? "--host \"$host_fa\"" : ""
+    def packaging_fa_opt = packaging_fa.name != "NO_FILE" ? "--packaging \"${params.bucket_path}/$packaging_fa\"" : ""
+    def host_fa_opt = host_fa.name != "NO_FILE2" ? "--host \"${params.bucket_path}/$host_fa\"" : ""
     def repcap_name_opt = repcap_name ? "--repcap-name \"$repcap_name\"" : ""
     def helper_name_opt = helper_name ? "--helper-name \"$helper_name\"" : ""
     def lambda_name_opt = lambda_name ? "--lambda-name \"$lambda_name\"" : ""
     def packaging_fa_path = packaging_fa.name != "NO_FILE" ? "$packaging_fa" : ""
     def host_fa_path = host_fa.name != "NO_FILE2" ? "$host_fa" : ""
     """
-    get_reference_names.py "${vector_fa}" ${packaging_fa_opt} ${host_fa_opt} \\
+
+    get_reference_names.py "${params.bucket_path}/${vector_fa}" ${packaging_fa_opt} ${host_fa_opt} \\
         ${repcap_name_opt} ${helper_name_opt} ${lambda_name_opt} \\
         -o "${sample_id}.reference_names.tsv"
-    map_reads.sh ${sample_id} "${reads}" "${vector_fa}" \\
-        "${packaging_fa_path}" "${host_fa_path}"
+    map_reads.sh ${sample_id} "${params.bucket_path}/${reads}" "${params.bucket_path}/${vector_fa}" \\
+        "${params.bucket_path}/${packaging_fa_path}" "${params.bucket_path}/${host_fa_path}"
     """
 }
 
@@ -92,11 +93,12 @@ process make_report() {
     path("${sample_id}_AAV_report.pdf"), emit: aav_report_pdf
 
     script:
-    def ff_fa_path = flipflop_fa.name != "NO_FILE" ? "$flipflop_fa" : ""
+    def ff_fa_path = flipflop_fa.name != "NO_FILE" ? "${params.bucket_path}/$flipflop_fa" : ""
     """
+    
     write_sample_metadata.py "${sample_id}" "${sample_name}" "${mapped_reads}" \\
         -o "${sample_id}.metadata.tsv"
-    prepare_annotation.py "${vector_annotation}" "${reference_names}" \\
+    prepare_annotation.py "${params.bucket_path}/${vector_annotation}" "${reference_names}" \\
         "${itr_label_1}" "${itr_label_2}" \\
         -o annotation.txt
     make_report.sh \\
