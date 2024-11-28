@@ -20,10 +20,10 @@ process map_reads() {
     input:
     tuple val(sample_id),
           val(sample_name),
-          path(reads),
-          path(vector_fa),
-          path(packaging_fa),
-          path(host_fa),
+          val(reads),
+          val(vector_fa),
+          val(packaging_fa),
+          val(host_fa),
           val(repcap_name),
           val(helper_name),
           val(lambda_name)
