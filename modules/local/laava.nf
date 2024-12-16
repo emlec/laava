@@ -20,10 +20,10 @@ process map_reads() {
     input:
     tuple val(sample_id),
           val(sample_name),
-          val(reads),
-          val(vector_fa),
-          val(packaging_fa),
-          val(host_fa),
+          path(reads),
+          path(vector_fa),
+          path(packaging_fa),
+          path(host_fa),
           val(repcap_name),
           val(helper_name),
           val(lambda_name)
@@ -48,7 +48,6 @@ process map_reads() {
     def packaging_fa_path = packaging_fa.name != "NO_FILE" ? "$packaging_fa" : ""
     def host_fa_path = host_fa.name != "NO_FILE2" ? "$host_fa" : ""
     """
-
     get_reference_names.py "${vector_fa}" ${packaging_fa_opt} ${host_fa_opt} \\
         ${repcap_name_opt} ${helper_name_opt} ${lambda_name_opt} \\
         -o "${sample_id}.reference_names.tsv"
@@ -95,7 +94,6 @@ process make_report() {
     script:
     def ff_fa_path = flipflop_fa.name != "NO_FILE" ? "$flipflop_fa" : ""
     """
-    
     write_sample_metadata.py "${sample_id}" "${sample_name}" "${mapped_reads}" \\
         -o "${sample_id}.metadata.tsv"
     prepare_annotation.py "${vector_annotation}" "${reference_names}" \\
