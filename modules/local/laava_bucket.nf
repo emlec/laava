@@ -18,15 +18,15 @@ process map_reads() {
     publishDir "$params.output", mode: "copy"
 
     input:
-    tuple val(sample_id),
-          val(sample_name),
-          val(reads),
-          val(vector_fa),
-          val(packaging_fa),
-          val(host_fa),
-          val(repcap_name),
-          val(helper_name),
-          val(lambda_name)
+        tuple val(sample_id),
+        val(sample_name),
+        val(reads),
+        val(vector_fa),
+        val(packaging_fa),
+        val(host_fa),
+        val(repcap_name),
+        val(helper_name),
+        val(lambda_name)
 
     output:
     tuple val(sample_id),
@@ -62,19 +62,19 @@ process make_report() {
     publishDir "$params.output", mode: "copy"
 
     input:
-    tuple val(sample_id),
-          val(sample_name),
-          path(reference_names),
-          path(mapped_reads),
-          path(vector_annotation),
-          val(itr_label_1),
-          val(itr_label_2),
-          val(vector_type),
-          val(target_gap_threshold),
-          val(max_allowed_outside_vector),
-          val(max_allowed_missing_flanking),
-          val(flipflop_name),
-          path(flipflop_fa)
+        tuple val(sample_id),
+        val(sample_name),
+        path(reference_names),
+        path(mapped_reads),
+        path(vector_annotation),
+        val(itr_label_1),
+        val(itr_label_2),
+        val(vector_type),
+        val(target_gap_threshold),
+        val(max_allowed_outside_vector),
+        val(max_allowed_missing_flanking),
+        val(flipflop_name),
+        path(flipflop_fa)
 
     output:
     // summary tables
